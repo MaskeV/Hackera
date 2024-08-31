@@ -1,3 +1,6 @@
+import firebase from 'firebase/app';
+import 'firebase/auth';
+
 const express = require('express');
 const path = require('path');
 

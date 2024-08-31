@@ -7,16 +7,106 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        .nav-drawer {
+            width: 250px;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .nav-drawer.open {
+            transform: translateX(0);
+        }
+        .nav-drawer a {
+            color: #e0e0e0;
+            text-decoration: none;
+            display: block;
+            padding: 40px 0;
+        }
+        .nav-drawer a:hover {
+            background-color: #444;
+        }
+        .hamburger-menu {
+            width: 30px;
+            height: 30px;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #007bff;
+            border-radius: 4px;
+            border: none;
+        }
+        .hamburger-menu div {
+            width: 20px;
+            height: 3px;
+            background-color: #fff;
+            margin: 2px 0;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-area {
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .chat-message.user {
+            text-align: right;
+        }
+        .chat-message.bot {
+            text-align: left;
         }
         textarea {
-            width: 100%;
-            height: 100px;
+            width: calc(100% - 22px);
+            height: 80px;
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 10px;
+            box-sizing: border-box;
             margin-bottom: 10px;
+            resize: none;
         }
         button {
             display: block;
@@ -26,27 +116,142 @@
             color: white;
             border: none;
             font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        .response {
+        button:hover {
+            background-color: #0056b3;
+        }
+        .profile-area {
+            display: none;
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            flex: 1;
+            overflow-y: auto;
+        }
+        .profile-area.active {
+            display: block;
+        }
+        .profile-area img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            margin-bottom: 10px;
+        }
+        /* Chat History List */
+        .history-list {
             margin-top: 20px;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+        }
+        .history-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #444;
+        }
+        .history-item:hover {
+            background-color: #444;
+        }
+        @media screen and (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .hamburger-menu {
+                top: 10px;
+                left: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Ask Gemini</h1>
-        <form id="chat-form">
-            <textarea id="question" placeholder="Ask your question here..."></textarea>
-            <button type="submit">Ask</button>
-        </form>
-        <div id="response" class="response"></div>
+    <button class="hamburger-menu" onclick="toggleNavDrawer()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </button>
+    <div id="nav-drawer" class="nav-drawer">
+        <a href="#" id="history-nav">History</a>
+        <a href="#" id="profile-nav">Profile</a>
+        <a href="#" id="progress-nav">User Progress</a>
+        <a href="#" id="signout-nav">Sign Out</a>
+        
+        <!-- Chat History Section -->
+        <div class="history-list" id="chat-history-list">
+            <h3>Chat History</h3>
+            <!-- History items will be appended here -->
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="chat-area" id="chat-area">
+            <div id="chat-history" class="chat-history">
+                <!-- Chat messages will be appended here -->
+            </div>
+            <form id="chat-form">
+                <textarea id="question" placeholder="Ask your question here..." required></textarea>
+                <button type="submit">Ask</button>
+            </form>
+        </div>
+        <div id="profile" class="profile-area">
+            <h2>User Profile</h2>
+            <img src="profile-pic.jpg" alt="Profile Picture">
+            <p><strong>Name:</strong> John Doe</p>
+            <p><strong>Email:</strong> johndoe@example.com</p>
+            <p><strong>Member Since:</strong> January 2022</p>
+        </div>
     </div>
 
     <script>
-        document.getElementById('chat-form').addEventListener('submit', async (event) => {
+        function toggleNavDrawer() {
+            const drawer = document.getElementById('nav-drawer');
+            drawer.classList.toggle('open');
+        }
+
+        // Handle navigation clicks
+        document.getElementById('history-nav').addEventListener('click', () => {
+            document.getElementById('chat-area').style.display = 'block';
+            document.getElementById('profile').classList.remove('active');
+        });
+
+        document.getElementById('profile-nav').addEventListener('click', () => {
+            document.getElementById('chat-area').style.display = 'none';
+            document.getElementById('profile').classList.add('active');
+            toggleNavDrawer();
+        });
+
+        document.getElementById('progress-nav').addEventListener('click', () => {
+            document.getElementById('chat-area').style.display = 'block';
+            document.getElementById('profile').classList.remove('active');
+            document.getElementById('chat-history').innerHTML = `
+                <h2>User Progress</h2>
+                <p>User progress details go here.</p>
+            `;
+            toggleNavDrawer();
+        });
+
+        document.getElementById('signout-nav').addEventListener('click', () => {
+            window.location.href = '/login.html';
+        });
+
+        // Chat form logic
+        let conversations = []; // Array to store all conversations
+
+        const chatForm = document.getElementById('chat-form');
+        const questionInput = document.getElementById('question');
+        const chatHistory = document.getElementById('chat-history');
+        const chatHistoryList = document.getElementById('chat-history-list');
+
+        chatForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const question = document.getElementById('question').value;
-            const responseDiv = document.getElementById('response');
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            // Add user message to chat history
+            appendMessage('user', question);
 
             try {
                 const response = await fetch('/ask', {
@@ -60,11 +265,54 @@
                 }
 
                 const data = await response.text();
-                responseDiv.textContent = data;
+
+                // Add bot response to chat history
+                appendMessage('bot', data);
+
+                // Store conversation
+                storeConversation(question, data);
+
+                // Clear the textarea
+                questionInput.value = '';
             } catch (error) {
-                responseDiv.textContent = 'An error occurred: ' + error.message;
+                appendMessage('bot', `An error occurred: ${error.message}`);
             }
         });
+
+        function appendMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', sender);
+            messageElement.innerHTML = `<strong>${sender === 'user' ? 'You' : 'Bot'}:</strong> ${message}`;
+            chatHistory.appendChild(messageElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function storeConversation(question, answer) {
+            const convo = { question, answer };
+            conversations.push(convo);
+            updateHistoryList();
+        }
+
+        function updateHistoryList() {
+            // Clear existing history
+            chatHistoryList.innerHTML = '<h3>Chat History</h3>';
+            // Add each question to the history list
+            conversations.forEach((convo, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item');
+                historyItem.textContent = convo.question;
+                historyItem.addEventListener('click', () => loadConversation(index));
+                chatHistoryList.appendChild(historyItem);
+            });
+        }
+
+        function loadConversation(index) {
+            const convo = conversations[index];
+            chatHistory.innerHTML = '';
+            appendMessage('user', convo.question);
+            appendMessage('bot', convo.answer);
+            toggleNavDrawer();
+        }
     </script>
 </body>
 </html>
