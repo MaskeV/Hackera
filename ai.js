@@ -10,7 +10,7 @@ const port = 3000;
 let users = {};
 
 // Initialize GoogleGenerativeAI with your API key
-const genAI = new GoogleGenerativeAI('AIzaSyC3LAgP8FNdZelxI_mEPrav1Ti9c1HEcvM');
+const genAI = new GoogleGenerativeAI('***************************');  // Add your API key here
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 // Middleware
