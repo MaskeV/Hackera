@@ -1,7 +1,7 @@
 This is Projet developed during Hackera hackathon. Our problem statement is AI inhanced online debate platform which provides real time feedback,records uses progress and also do fact checking,
 in this project we have made a chatbot which answer your question and provides  personalized feedback to user about his argument and suggest some improvements to user.
 
-WWe have used:
+We have used:
 1) Gemini API - To integrate ai in our project
 2) Firebase - To authenticate users (Partially working)
 3) Vertex AI - To give context to AI chatbot
