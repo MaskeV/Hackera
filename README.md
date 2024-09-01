@@ -3,7 +3,7 @@ in this project we have made a chatbot which answer your question and provides  
 
 WWe have used:
 1) Gemini API - To integrate ai in our project
-2) Firebas - To authenticate users (Partially working)
+2) Firebase - To authenticate users (Partially working)
 3) Vertex AI - To give context to AI chatbot
 
 Steps to follow:
